@@ -1,14 +1,29 @@
 package com.financex.financex_ledger;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:sqlite:financex_ledger";
-//    private static final String URL = "jdbc:sqlite:C:/path/to/financex_ledger.db";
+    public static String getPasswordByEmail(String email) {
+        String query = "SELECT password FROM Users WHERE email = ?";
 
+        try (Connection conn = connect()) {
+            assert conn != null;
+            try (PreparedStatement statement = conn.prepareStatement(query)) {
+                statement.setString(1, email);
+                ResultSet rs = statement.executeQuery();
+
+                if (rs.next()) {
+                    return rs.getString("password");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving password: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    private static final String URL = "jdbc:sqlite:financex_ledger";
 
     public static Connection connect() {
         try {
