@@ -6,6 +6,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
+
 public class LoginFormController {
     @FXML
     private TextField emailField;
@@ -35,6 +37,16 @@ public class LoginFormController {
             showAlert(Alert.AlertType.ERROR, "Login Failed", "Incorrect email or password.");
         }
     }
+    @FXML
+    private void signupUser() throws IOException {
+        Main.setRoot("RegistrationForm");
+    }
+
+
+    private void navigateTo(String s, String ledgerSystem) {
+        
+    }
+
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

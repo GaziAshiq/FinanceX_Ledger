@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 
 import com.financex.financex_ledger.utils.Validation;
 
+import java.io.IOException;
+
 public class RegistrationFormController {
 
     @FXML
@@ -59,6 +61,11 @@ public class RegistrationFormController {
         } else {
             showAlert(Alert.AlertType.ERROR, "Registration Failed", "Could not register. Please try again.");
         }
+    }
+
+    @FXML
+    private void loginUser() throws IOException {
+        Main.setRoot("LoginForm");
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
