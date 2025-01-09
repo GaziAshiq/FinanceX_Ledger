@@ -24,7 +24,7 @@ public class RegistrationFormController {
     private PasswordField confirmPasswordField;
 
     @FXML
-    private void registerUser() {
+    private void registerUser() throws IOException {
         String name = nameField.getText();
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -58,6 +58,7 @@ public class RegistrationFormController {
         boolean success = UserRegistration.registerUser(name, email, password);
         if (success) {
             showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "You have successfully registered.");
+            Main.setRoot("LoginForm");
         } else {
             showAlert(Alert.AlertType.ERROR, "Registration Failed", "Could not register. Please try again.");
         }
