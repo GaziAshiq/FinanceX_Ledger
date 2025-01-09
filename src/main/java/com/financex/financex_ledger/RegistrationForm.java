@@ -11,9 +11,13 @@ import java.util.Objects;
 public class RegistrationForm extends Application {
 
     public static void main(String[] args) {
+        // Initialize the database
         DatabaseConnection.initializeDatabase();
+
+        // Launch the application
         launch(args);
     }
+
 
     @Override
     public void start(Stage primaryStage) {

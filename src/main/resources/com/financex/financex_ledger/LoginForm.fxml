@@ -15,5 +15,4 @@
     <PasswordField fx:id="passwordField" promptText="Enter your password"/>
     <Button onAction="#loginUser" text="Login"/>
     <Button onAction="#signupUser" text="Sign up"/>
-
 </VBox>
