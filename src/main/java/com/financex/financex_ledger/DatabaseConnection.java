@@ -69,7 +69,6 @@ public class DatabaseConnection {
         }
     }
 
-
     public static void createTransactionTableForUser(Connection conn, int userId) {
         String tableName = "user_" + userId + "_transactions";
         String createTableSQL = """
@@ -93,32 +92,27 @@ public class DatabaseConnection {
         }
     }
 
-
     public static double addTransaction(int userId, String description, double debit, double credit) {
         String tableName = "user_" + userId + "_transactions";
-        String createTableSQL = """
-        CREATE TABLE IF NOT EXISTS %s (
-            transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            description TEXT NOT NULL,
-            debit REAL DEFAULT 0,
-            credit REAL DEFAULT 0,
-            balance REAL NOT NULL,
-            savings REAL DEFAULT 0,
-            savings_percentages REAL DEFAULT 0
-        );
-    """.formatted(tableName);
+
+        // Ensure amounts are positive
+        if (debit < 0 || credit < 0) {
+            System.out.println("Debit or credit amount cannot be negative.");
+            return -1; // Indicate failure
+        }
 
         double currentBalance = getUserBalance(userId);
         double newBalance = currentBalance + credit - debit;
 
+        // Check for invalid balances (e.g., overdraft)
+        if (newBalance < 0) {
+            System.out.println("Transaction would result in a negative balance. Operation not allowed.");
+            return -1; // Indicate failure
+        }
+
         try (Connection connection = connect();
-             Statement createTableStatement = connection.createStatement();
              PreparedStatement insertStatement = connection.prepareStatement(
                      "INSERT INTO " + tableName + " (description, debit, credit, balance) VALUES (?, ?, ?, ?)")) {
-
-            // Ensure the table exists
-            createTableStatement.execute(createTableSQL);
 
             // Insert transaction
             insertStatement.setString(1, description);
@@ -126,6 +120,7 @@ public class DatabaseConnection {
             insertStatement.setDouble(3, credit);
             insertStatement.setDouble(4, newBalance);
             insertStatement.executeUpdate();
+
         } catch (SQLException e) {
             System.out.println("Error adding transaction: " + e.getMessage());
             return -1; // Indicate failure
@@ -133,7 +128,6 @@ public class DatabaseConnection {
 
         return newBalance;
     }
-
 
 
     public static String getUserName(int userId) {
@@ -162,7 +156,6 @@ public class DatabaseConnection {
         return 0.0;
     }
 
-
     public static double updateBalance(int userId, double change) {
         String query = "SELECT SUM(balance) AS total_balance FROM user_" + userId + "_transactions";
         double currentBalance = 0.0;
@@ -177,7 +170,6 @@ public class DatabaseConnection {
 
         return currentBalance + change;
     }
-
 
     public static double getUserSavings(int userId) {
         String query = "SELECT SUM(savings) AS total_savings FROM user_" + userId + "_transactions";
@@ -204,6 +196,4 @@ public class DatabaseConnection {
         }
         return 0.0;
     }
-
-
 }
